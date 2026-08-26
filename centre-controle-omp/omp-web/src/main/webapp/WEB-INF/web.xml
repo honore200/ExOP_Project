@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>omp-web</display-name>
+
+    <welcome-file-list>
+        <welcome-file>pages/login.xhtml</welcome-file>
+    </welcome-file-list>
+
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+
+    <context-param>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>saga</param-value>
+    </context-param>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <!-- Page publique : login. Doit precede la contrainte generale (correspondance exacte prioritaire). -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>public</web-resource-name>
+            <url-pattern>/pages/login.xhtml</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+
+    <!-- Toutes les autres pages exigent une session authentifiee (RBAC fin par page en Phase 7). -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>protected</web-resource-name>
+            <url-pattern>/pages/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>**</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-role>
+        <role-name>ADMIN</role-name>
+    </security-role>
+    <security-role>
+        <role-name>CONTROL_ROOM</role-name>
+    </security-role>
+    <security-role>
+        <role-name>RAILWAY</role-name>
+    </security-role>
+    <security-role>
+        <role-name>PORT</role-name>
+    </security-role>
+    <security-role>
+        <role-name>MAINTENANCE</role-name>
+    </security-role>
+    <security-role>
+        <role-name>MANAGER</role-name>
+    </security-role>
+    <security-role>
+        <role-name>VIEWER</role-name>
+    </security-role>
+
+</web-app>

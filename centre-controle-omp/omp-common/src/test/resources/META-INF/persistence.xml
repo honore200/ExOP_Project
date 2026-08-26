@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
+             version="3.1">
+
+    <!--
+      Persistence unit RESOURCE_LOCAL utilisee UNIQUEMENT par les tests d'integration
+      (Testcontainers, hors serveur d'applications) : le PU "ompPU" de src/main est en JTA avec
+      jta-data-source + <jar-file> vers l'EAR, invalides hors WildFly. Connexion fournie
+      programmatiquement (URL/JDBC du conteneur MySQL de test) par chaque IT.
+
+      <class> listes explicitement : les entites vivent dans target/classes (sources main), un
+      classpath root DIFFERENT de celui qui contient ce persistence.xml (target/test-classes) - le
+      scan implicite ("exclude-unlisted-classes=false") ne regarde que le root du PU lui-meme et ne
+      les trouverait pas.
+    -->
+    <persistence-unit name="ompTestPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>com.omp.common.entity.Alert</class>
+        <class>com.omp.common.entity.Asset</class>
+        <class>com.omp.common.entity.AssetType</class>
+        <class>com.omp.common.entity.AuditLog</class>
+        <class>com.omp.common.entity.Client</class>
+        <class>com.omp.common.entity.ClientDetail</class>
+        <class>com.omp.common.entity.Domain</class>
+        <class>com.omp.common.entity.Event</class>
+        <class>com.omp.common.entity.EventType</class>
+        <class>com.omp.common.entity.Incident</class>
+        <class>com.omp.common.entity.IncidentType</class>
+        <class>com.omp.common.entity.Kpi</class>
+        <class>com.omp.common.entity.KpiValue</class>
+        <class>com.omp.common.entity.Location</class>
+        <class>com.omp.common.entity.Operation</class>
+        <class>com.omp.common.entity.OperationAsset</class>
+        <class>com.omp.common.entity.OperationObservation</class>
+        <class>com.omp.common.entity.OperationResource</class>
+        <class>com.omp.common.entity.OperationStep</class>
+        <class>com.omp.common.entity.OperationType</class>
+        <class>com.omp.common.entity.Resource</class>
+        <class>com.omp.common.entity.ResourceType</class>
+        <class>com.omp.common.entity.Role</class>
+        <class>com.omp.common.entity.Status</class>
+        <class>com.omp.common.entity.StepType</class>
+        <class>com.omp.common.entity.User</class>
+        <class>com.omp.common.entity.UserRole</class>
+
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>

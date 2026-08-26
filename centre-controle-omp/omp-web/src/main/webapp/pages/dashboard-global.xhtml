@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                template="/templates/layout.xhtml">
+    <ui:param name="title" value="Vue generale"/>
+
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewAction action="#{dashboardGlobalBean.init}"/>
+        </f:metadata>
+
+        <!-- Connexion directe au endpoint JSR 356 de omp-api (/api/events/stream) : c'est un
+             ServerEndpoint brut (EventsWebSocketEndpoint), pas le mecanisme de push PrimeFaces
+             (p:socket) ni celui de Jakarta Faces (f:websocket), qui exigeraient chacun leur propre
+             enregistrement cote serveur incompatible avec ce endpoint partage entre tous les
+             dashboards. -->
+        <h:outputScript>
+            (function() {
+                var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                var socket = new WebSocket(protocol + '//' + window.location.host + '/api/events/stream');
+                socket.onmessage = function(evt) {
+                    console.log('Evenement temps reel recu', JSON.parse(evt.data));
+                    // TODO Phase suivante : rafraichir les widgets concernes via un appel ajax cible
+                    // plutot qu'un rechargement complet de page.
+                };
+            })();
+        </h:outputScript>
+
+        <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+            <p:panel header="Operations aujourd'hui" style="flex:1; min-width:180px;">
+                <h2>#{dashboardGlobalBean.summary.operationsToday}</h2>
+            </p:panel>
+            <p:panel header="Alertes actives" style="flex:1; min-width:180px;">
+                <h2>#{dashboardGlobalBean.summary.openAlerts}</h2>
+            </p:panel>
+            <p:panel header="Incidents ouverts" style="flex:1; min-width:180px;">
+                <h2>#{dashboardGlobalBean.summary.openIncidents}</h2>
+            </p:panel>
+        </div>
+
+        <p:panel header="Operations du jour par domaine">
+            <p:dataTable value="#{dashboardGlobalBean.summary.operationsByDomain.entrySet().toArray()}" var="entry">
+                <p:column headerText="Domaine">#{entry.key}</p:column>
+                <p:column headerText="Operations">#{entry.value}</p:column>
+                <p:column headerText="En cours">#{dashboardGlobalBean.summary.operationsInProgressByDomain[entry.key]}</p:column>
+            </p:dataTable>
+        </p:panel>
+    </ui:define>
+</ui:composition>

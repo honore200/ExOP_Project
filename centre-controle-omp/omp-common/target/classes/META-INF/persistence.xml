@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
+             version="3.1">
+
+    <!--
+      Persistence unit UNIQUE pour tout l'EAR (cf plan, decision d'architecture #4) : les requetes
+      transversales du dashboard general doivent joindre les entites generiques (omp-common) et les
+      specialisations de domaine (omp-port, omp-rail). Le schema est gere par Flyway
+      (FlywayMigrationStartup dans omp-api), jamais par hbm2ddl -> hbm2ddl.auto=validate.
+    -->
+    <persistence-unit name="ompPU" transaction-type="JTA">
+        <jta-data-source>java:/OmpDS</jta-data-source>
+
+        <!-- Entites de omp-port/omp-rail, empaquetees en lib/ dans l'EAR (cf omp-ear/pom.xml) -->
+        <jar-file>lib/omp-port.jar</jar-file>
+        <jar-file>lib/omp-rail.jar</jar-file>
+
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.jdbc.time_zone" value="UTC"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>

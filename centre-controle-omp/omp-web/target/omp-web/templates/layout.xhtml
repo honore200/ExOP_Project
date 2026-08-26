@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="primefaces">
+<h:head>
+    <title>Centre de Controle OMP - #{empty title ? 'Accueil' : title}</title>
+</h:head>
+<h:body>
+    <p:menubar>
+        <p:menuitem value="Vue generale" outcome="/pages/dashboard-global.xhtml" icon="pi pi-home"/>
+        <p:menuitem value="Railway Control" outcome="/pages/dashboard-rail.xhtml" icon="pi pi-directions"/>
+        <p:menuitem value="Port Operations" outcome="/pages/dashboard-port.xhtml" icon="pi pi-compass"/>
+        <p:menuitem value="Maintenance" outcome="/pages/maintenance.xhtml" icon="pi pi-wrench"/>
+        <p:menuitem value="Incidents / Alertes" outcome="/pages/alertes.xhtml" icon="pi pi-exclamation-triangle"/>
+        <p:menuitem value="Rapports" outcome="/pages/rapports.xhtml" icon="pi pi-file-pdf"/>
+        <p:menuitem value="Administration" outcome="/pages/administration.xhtml" icon="pi pi-cog"/>
+    </p:menubar>
+
+    <div class="omp-content" style="padding: 1.5rem;">
+        <ui:insert name="content">Contenu non defini</ui:insert>
+    </div>
+</h:body>
+</html>

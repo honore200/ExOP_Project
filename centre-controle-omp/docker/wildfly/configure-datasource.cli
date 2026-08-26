@@ -1,0 +1,26 @@
+embed-server --std-out=echo --server-config=standalone.xml
+
+batch
+
+/subsystem=datasources/jdbc-driver=com.mysql:add( \
+    driver-name=com.mysql, \
+    driver-module-name=com.mysql, \
+    driver-xa-datasource-class-name=com.mysql.cj.jdbc.MysqlXADataSource)
+
+data-source add \
+    --name=OmpDS \
+    --jndi-name=java:/OmpDS \
+    --driver-name=com.mysql \
+    --connection-url=${env.OMP_DB_URL:jdbc:mysql://mysql:3306/omp_ccontrole?useSSL=false&serverTimezone=UTC} \
+    --user-name=${env.OMP_DB_USER:omp} \
+    --password=${env.OMP_DB_PASSWORD:omp} \
+    --min-pool-size=5 \
+    --max-pool-size=25 \
+    --validate-on-match=true \
+    --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker \
+    --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter \
+    --enabled=true
+
+run-batch
+
+stop-embedded-server

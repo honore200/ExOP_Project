@@ -1,0 +1,32 @@
+# Image WildFly + module JDBC MySQL + datasource OmpDS pre-configuree + EAR de l'application.
+# Cf plan section 5 : mysql-connector-j est scope "provided" dans omp-api car le driver vit ici,
+# installe comme module WildFly cote serveur (pas embarque dans le WAR).
+#
+# Contexte de build attendu = racine du projet (centre-controle-omp/), cf docker-compose.yml
+# (build.context: ..). EAR a construire au prealable avec `mvn clean package` a la racine.
+#
+# A verifier/ajuster : version WildFly exacte a utiliser au moment du build (Jakarta EE 10).
+FROM quay.io/wildfly/wildfly:33.0.2.Final-jdk21
+
+ARG MYSQL_CONNECTOR_VERSION=8.4.0
+USER root
+
+ADD --chown=jboss:root \
+    https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/${MYSQL_CONNECTOR_VERSION}/mysql-connector-j-${MYSQL_CONNECTOR_VERSION}.jar \
+    /opt/jboss/wildfly/modules/system/layers/base/com/mysql/main/mysql-connector-j.jar
+
+COPY --chown=jboss:root docker/wildfly/module.xml \
+    /opt/jboss/wildfly/modules/system/layers/base/com/mysql/main/module.xml
+
+COPY --chown=jboss:root docker/wildfly/configure-datasource.cli /tmp/configure-datasource.cli
+
+USER jboss
+RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/tmp/configure-datasource.cli
+
+# EAR construit par `mvn clean package` a la racine du projet avant `docker compose build`.
+COPY --chown=jboss:root omp-ear/target/centre-controle-omp.ear \
+    /opt/jboss/wildfly/standalone/deployments/
+
+EXPOSE 8080 9990
+
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                template="/templates/layout.xhtml">
+    <ui:param name="title" value="Maintenance"/>
+
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewAction action="#{maintenanceBean.init}"/>
+        </f:metadata>
+
+        <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+            <p:panel header="Actifs en maintenance" style="flex:1;">
+                <h2>#{maintenanceBean.assetsUnderMaintenance}</h2>
+            </p:panel>
+            <p:panel header="Actifs hors service" style="flex:1;">
+                <h2>#{maintenanceBean.assetsOutOfService}</h2>
+            </p:panel>
+        </div>
+
+        <h:form>
+            <p:panel header="Actifs">
+                <p:dataTable value="#{maintenanceBean.assets}" var="a" paginator="true" rows="20">
+                    <p:column headerText="Code">#{a.assetCode}</p:column>
+                    <p:column headerText="Nom">#{a.assetName}</p:column>
+                    <p:column headerText="Type">#{a.assetType.name}</p:column>
+                    <p:column headerText="Localisation">#{a.location.name}</p:column>
+                    <p:column headerText="Statut">#{a.status.name}</p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <p:panel header="Interventions de maintenance" style="margin-top:1.5rem;">
+                <p:dataTable value="#{maintenanceBean.maintenanceOperations}" var="o" paginator="true" rows="20">
+                    <p:column headerText="Code operation">#{o.operationCode}</p:column>
+                    <p:column headerText="Type">#{o.operationType.name}</p:column>
+                    <p:column headerText="Debut">
+                        <h:outputText value="#{o.startDatetime}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="UTC"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Statut">#{o.status.name}</p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

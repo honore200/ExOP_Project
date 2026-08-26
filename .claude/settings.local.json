@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn -q -pl omp-common,omp-port,omp-rail -am compile)",
+      "Bash(mvn -pl omp-web -am compile)"
+    ],
+    "defaultMode": "bypassPermissions"
+  }
+}

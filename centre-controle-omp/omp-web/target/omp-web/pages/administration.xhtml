@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                template="/templates/layout.xhtml">
+    <ui:param name="title" value="Administration"/>
+
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewAction action="#{administrationBean.init}"/>
+        </f:metadata>
+
+        <h:form id="usersForm">
+            <p:panel header="Utilisateurs">
+                <p:dataTable value="#{administrationBean.users}" var="u">
+                    <p:column headerText="Identifiant">#{u.username}</p:column>
+                    <p:column headerText="Nom complet">#{u.fullName}</p:column>
+                    <p:column headerText="Actif">#{u.enabled}</p:column>
+                </p:dataTable>
+
+                <h:panelGrid columns="2" style="margin-top:1rem;">
+                    <p:outputLabel for="newUsername" value="Identifiant"/>
+                    <p:inputText id="newUsername" value="#{administrationBean.newUsername}"/>
+
+                    <p:outputLabel for="newFullName" value="Nom complet"/>
+                    <p:inputText id="newFullName" value="#{administrationBean.newFullName}"/>
+
+                    <p:outputLabel for="newPassword" value="Mot de passe"/>
+                    <p:password id="newPassword" value="#{administrationBean.newPassword}" feedback="false"/>
+
+                    <p:outputLabel for="newRoles" value="Roles"/>
+                    <p:selectManyCheckbox id="newRoles" value="#{administrationBean.newUserRoleCodes}">
+                        <f:selectItems value="#{administrationBean.roles}" var="r" itemLabel="#{r.name}" itemValue="#{r.code}"/>
+                    </p:selectManyCheckbox>
+                </h:panelGrid>
+                <p:commandButton value="Creer l'utilisateur" action="#{administrationBean.createUser}" update="usersForm"/>
+            </p:panel>
+        </h:form>
+
+        <h:form id="locationsForm" style="margin-top:2rem;">
+            <p:panel header="Localisations">
+                <p:dataTable value="#{administrationBean.locations}" var="l">
+                    <p:column headerText="Code">#{l.code}</p:column>
+                    <p:column headerText="Nom">#{l.name}</p:column>
+                    <p:column headerText="Type">#{l.locationType}</p:column>
+                </p:dataTable>
+
+                <h:panelGrid columns="2" style="margin-top:1rem;">
+                    <p:outputLabel for="newLocationCode" value="Code"/>
+                    <p:inputText id="newLocationCode" value="#{administrationBean.newLocationCode}"/>
+
+                    <p:outputLabel for="newLocationName" value="Nom"/>
+                    <p:inputText id="newLocationName" value="#{administrationBean.newLocationName}"/>
+
+                    <p:outputLabel for="newLocationType" value="Type"/>
+                    <p:selectOneMenu id="newLocationType" value="#{administrationBean.newLocationType}">
+                        <f:selectItems value="#{administrationBean.locationTypes}"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                <p:commandButton value="Creer la localisation" action="#{administrationBean.createLocation}" update="locationsForm"/>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

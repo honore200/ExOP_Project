@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.omp</groupId>
+  <artifactId>centre-controle-omp</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Centre de Controle OMP</name>
+  <description>Centre de controle operationnel port et rail - squelette multi-modules Jakarta EE 10</description>
+
+  <modules>
+    <module>omp-common</module>
+    <module>omp-port</module>
+    <module>omp-rail</module>
+    <module>omp-api</module>
+    <module>omp-web</module>
+    <module>omp-ear</module>
+  </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+
+    <!-- Versions a verifier/ajuster en debut de Phase 1 (derniere stable au moment du build) -->
+    <jakartaee.version>10.0.0</jakartaee.version>
+    <primefaces.version>13.0.9</primefaces.version>
+    <mysql-connector-j.version>8.4.0</mysql-connector-j.version>
+    <flyway.version>10.15.0</flyway.version>
+    <jjwt.version>0.12.6</jjwt.version>
+    <junit-bom.version>5.11.0</junit-bom.version>
+    <mockito.version>5.14.0</mockito.version>
+    <arquillian-bom.version>1.8.0.Final</arquillian-bom.version>
+    <wildfly-arquillian.version>5.1.0.Final</wildfly-arquillian.version>
+    <testcontainers-bom.version>1.21.4</testcontainers-bom.version>
+    <poi.version>5.3.0</poi.version>
+    <pdfbox.version>3.0.3</pdfbox.version>
+    <!-- Hibernate n'est PAS un provider embarque dans le WAR/EAR (fourni par WildFly a l'execution) -
+         cette version n'est utilisee qu'en scope test, pour les IT Testcontainers hors serveur. -->
+    <hibernate.version>6.5.2.Final</hibernate.version>
+
+    <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
+    <maven-ear-plugin.version>3.3.0</maven-ear-plugin.version>
+    <flyway-maven-plugin.version>${flyway.version}</flyway-maven-plugin.version>
+    <wildfly-maven-plugin.version>4.2.2.Final</wildfly-maven-plugin.version>
+    <maven-surefire-plugin.version>3.5.1</maven-surefire-plugin.version>
+    <maven-failsafe-plugin.version>3.5.1</maven-failsafe-plugin.version>
+    <dependency-check-maven.version>10.0.4</dependency-check-maven.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Jakarta EE 10 API - fournie par le serveur (WildFly), scope provided partout -->
+      <dependency>
+        <groupId>jakarta.platform</groupId>
+        <artifactId>jakarta.jakartaee-api</artifactId>
+        <version>${jakartaee.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- PrimeFaces - PAS fourni par WildFly, doit etre bundle dans omp-web -->
+      <dependency>
+        <groupId>org.primefaces</groupId>
+        <artifactId>primefaces</artifactId>
+        <version>${primefaces.version}</version>
+        <classifier>jakarta</classifier>
+      </dependency>
+
+      <!-- Driver MySQL - installe comme module WildFly cote serveur (scope provided dans omp-api) -->
+      <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <version>${mysql-connector-j.version}</version>
+      </dependency>
+
+      <!-- Hibernate ORM - scope test uniquement (IT Testcontainers hors serveur, cf omp-common) -->
+      <dependency>
+        <groupId>org.hibernate.orm</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.version}</version>
+      </dependency>
+
+      <!-- Flyway - confine a omp-api (FlywayMigrationStartup) -->
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-mysql</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+
+      <!-- JWT - confine a omp-api, jamais utilise par omp-web (session container-managed) -->
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <!-- Tests -->
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>${arquillian-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.wildfly.arquillian</groupId>
+        <artifactId>wildfly-arquillian-container-managed</artifactId>
+        <version>${wildfly-arquillian.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers-bom</artifactId>
+        <version>${testcontainers-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Rapports - Phase 6 -->
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>${poi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.pdfbox</groupId>
+        <artifactId>pdfbox</artifactId>
+        <version>${pdfbox.version}</version>
+      </dependency>
+
+      <!-- Force une version recente : POI/PDFBox pinnent une commons-lang3 trop ancienne pour la
+           commons-compress utilisee par Testcontainers >= 1.21 (org.apache.commons.lang3.ArrayFill
+           n'existe qu'a partir de 3.13). -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.17.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <release>${maven.compiler.release}</release>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${maven-war-plugin.version}</version>
+          <configuration>
+            <failOnMissingWebXml>false</failOnMissingWebXml>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-ear-plugin</artifactId>
+          <version>${maven-ear-plugin.version}</version>
+          <configuration>
+            <version>10</version>
+            <defaultLibBundleDir>lib</defaultLibBundleDir>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.flywaydb</groupId>
+          <artifactId>flyway-maven-plugin</artifactId>
+          <version>${flyway-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.wildfly.plugins</groupId>
+          <artifactId>wildfly-maven-plugin</artifactId>
+          <version>${wildfly-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+          <configuration>
+            <!-- Mockito/ByteBuddy inline mock maker ne reconnait pas encore les JDK tres recents
+                 (ex. JDK 26) tant qu'ils n'ont pas de release finale - sans equivalent negatif sur
+                 les JDK plus anciens/stables (17/21). A retirer une fois ByteBuddy a jour. -->
+            <argLine>-Dnet.bytebuddy.experimental=true</argLine>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-failsafe-plugin.version}</version>
+        </plugin>
+        <!-- Audit securite (Phase 7) : `mvn org.owasp:dependency-check-maven:aggregate` a la
+             racine (jamais bind au build par defaut - appel reseau vers la NVD, lent). -->
+        <plugin>
+          <groupId>org.owasp</groupId>
+          <artifactId>dependency-check-maven</artifactId>
+          <version>${dependency-check-maven.version}</version>
+          <configuration>
+            <failBuildOnCVSS>9</failBuildOnCVSS>
+            <formats>
+              <format>HTML</format>
+              <format>JSON</format>
+            </formats>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <!-- Declare ici (pas seulement en pluginManagement) pour etre invocable directement en tant
+           que `mvn dependency-check:aggregate` a la racine, sans <executions> donc jamais execute
+           par le build normal (compile/test/package/verify). -->
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
+      <id>prod</id>
+    </profile>
+    <profile>
+      <id>wildfly</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
+      <id>payara</id>
+      <!-- Variante documentee, non testee en CI (cf decision d'architecture #6 du plan) -->
+    </profile>
+  </profiles>
+
+</project>

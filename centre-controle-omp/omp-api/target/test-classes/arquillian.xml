@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <!--
+      Container "managed" : Arquillian demarre/arrete lui-meme une instance WildFly locale a chaque
+      run. Necessite la variable d'environnement JBOSS_HOME (ou WILDFLY_HOME selon la version du
+      plugin) pointant vers une distribution WildFly reelle deja installee - non fournie dans ce
+      depot (a telecharger en CI ou en local, cf docs/procedure-sauvegarde-restauration.md pour le
+      reste de l'outillage operationnel). Ces tests ne s'executent donc pas via `mvn test` standard,
+      uniquement sur une machine/CI ayant WildFly installe (`mvn verify -Parquillian`, cf pom.xml).
+    -->
+    <container qualifier="wildfly-managed" default="true">
+        <configuration>
+            <property name="jbossHome">${env.JBOSS_HOME}</property>
+            <property name="javaVmArguments">-Xmx512m -Djboss.socket.binding.port-offset=100</property>
+            <property name="allowConnectingToRunningServer">false</property>
+        </configuration>
+    </container>
+
+</arquillian>

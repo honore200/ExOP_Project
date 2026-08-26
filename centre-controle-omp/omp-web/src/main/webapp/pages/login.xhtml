@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="primefaces">
+<h:head>
+    <title>Centre de Controle OMP - Connexion</title>
+</h:head>
+<h:body>
+    <div style="max-width: 380px; margin: 8rem auto;">
+        <p:panel header="Centre de Controle OMP">
+            <h:form>
+                <p:messages showDetail="true" closable="true"/>
+
+                <div class="p-fluid" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <p:outputLabel for="username" value="Identifiant"/>
+                    <p:inputText id="username" value="#{loginBean.username}" required="true"/>
+
+                    <p:outputLabel for="password" value="Mot de passe"/>
+                    <p:password id="password" value="#{loginBean.password}" required="true" feedback="false"/>
+
+                    <p:commandButton value="Se connecter" action="#{loginBean.login}" ajax="false"/>
+                </div>
+            </h:form>
+        </p:panel>
+    </div>
+</h:body>
+</html>

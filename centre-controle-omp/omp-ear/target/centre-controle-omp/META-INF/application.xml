@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="https://jakarta.ee/xml/ns/jakartaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/application_10.xsd"
+              version="10">
+
+    <application-name>Centre-Controle-OMP</application-name>
+
+    <module>
+        <web>
+            <web-uri>omp-api.war</web-uri>
+            <context-root>/api</context-root>
+        </web>
+    </module>
+
+    <module>
+        <web>
+            <web-uri>omp-web.war</web-uri>
+            <context-root>/omp</context-root>
+        </web>
+    </module>
+
+</application>

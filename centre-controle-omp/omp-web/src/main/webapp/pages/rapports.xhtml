@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                template="/templates/layout.xhtml">
+    <ui:param name="title" value="Rapports"/>
+
+    <ui:define name="content">
+        <h:form>
+            <p:panel header="Export periodique">
+                <h:panelGrid columns="2" cellpadding="8">
+                    <p:outputLabel for="domain" value="Domaine"/>
+                    <p:selectOneMenu id="domain" value="#{rapportsBean.domainCode}">
+                        <f:selectItem itemLabel="Railway" itemValue="RAILWAY"/>
+                        <f:selectItem itemLabel="Port" itemValue="PORT"/>
+                        <f:selectItem itemLabel="Maintenance" itemValue="MAINTENANCE"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="from" value="Du"/>
+                    <p:datePicker id="from" value="#{rapportsBean.from}" pattern="dd/MM/yyyy"/>
+
+                    <p:outputLabel for="to" value="Au"/>
+                    <p:datePicker id="to" value="#{rapportsBean.to}" pattern="dd/MM/yyyy"/>
+                </h:panelGrid>
+
+                <p:commandButton value="Telecharger PDF" ajax="false" icon="pi pi-file-pdf">
+                    <p:fileDownload value="#{rapportsBean.downloadPdf()}"/>
+                </p:commandButton>
+                <p:commandButton value="Telecharger Excel" ajax="false" icon="pi pi-file-excel" style="margin-left:0.5rem;">
+                    <p:fileDownload value="#{rapportsBean.downloadExcel()}"/>
+                </p:commandButton>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

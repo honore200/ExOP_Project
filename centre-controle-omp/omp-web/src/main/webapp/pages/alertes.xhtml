@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                template="/templates/layout.xhtml">
+    <ui:param name="title" value="Incident Control"/>
+
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewAction action="#{alertesBean.init}"/>
+        </f:metadata>
+
+        <h:form id="alertsForm">
+            <p:panel header="Alertes actives">
+                <p:dataTable value="#{alertesBean.openAlerts}" var="a" sortBy="#{a.severity}" sortOrder="descending">
+                    <p:column headerText="Type">#{a.alertType}</p:column>
+                    <p:column headerText="Severite">#{a.severity}</p:column>
+                    <p:column headerText="Creee le">
+                        <h:outputText value="#{a.createdAt}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="UTC"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Actions">
+                        <p:commandButton value="Acquitter" action="#{alertesBean.acknowledge(a)}" update="alertsForm"/>
+                        <p:commandButton value="Resoudre" action="#{alertesBean.resolveAlert(a)}" update="alertsForm"/>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+
+        <h:form id="incidentsForm" style="margin-top:2rem;">
+            <p:panel header="Incidents ouverts">
+                <p:dataTable value="#{alertesBean.openIncidents}" var="i" sortBy="#{i.severity}" sortOrder="descending">
+                    <p:column headerText="Type">#{i.incidentType.name}</p:column>
+                    <p:column headerText="Severite">#{i.severity}</p:column>
+                    <p:column headerText="Debut">
+                        <h:outputText value="#{i.startDatetime}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="UTC"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Description">#{i.description}</p:column>
+                    <p:column headerText="Actions">
+                        <p:commandButton value="Resoudre" action="#{alertesBean.resolveIncident(i)}" update="incidentsForm"/>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

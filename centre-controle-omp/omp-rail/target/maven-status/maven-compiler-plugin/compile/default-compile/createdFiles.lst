@@ -1,0 +1,3 @@
+com/omp/rail/entity/RailwayRotation.class
+com/omp/rail/repository/RailwayRotationRepository.class
+com/omp/rail/service/RailwayRotationService.class

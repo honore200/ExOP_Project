@@ -1,0 +1,4 @@
+com/omp/common/service/OperationServiceTest.class
+com/omp/common/integration/OperationPersistenceIT.class
+com/omp/common/service/AlertServiceTest.class
+com/omp/common/service/EventServiceTest.class

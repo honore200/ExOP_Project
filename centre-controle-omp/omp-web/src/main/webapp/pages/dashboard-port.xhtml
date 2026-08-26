@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                template="/templates/layout.xhtml">
+    <ui:param name="title" value="Port Operations"/>
+
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewAction action="#{dashboardPortBean.init}"/>
+        </f:metadata>
+
+        <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+            <p:panel header="Escales suivies" style="flex:1;">
+                <h2>#{dashboardPortBean.calls.size()}</h2>
+            </p:panel>
+            <p:panel header="Navires actuellement a quai" style="flex:1;">
+                <h2>#{dashboardPortBean.callsAtBerth.size()}</h2>
+            </p:panel>
+        </div>
+
+        <h:form>
+            <p:dataTable value="#{dashboardPortBean.calls}" var="c" paginator="true" rows="20">
+                <p:column headerText="Navire">#{c.vessel.assetName}</p:column>
+                <p:column headerText="Quai">#{c.quay.name}</p:column>
+                <p:column headerText="ETA">
+                    <h:outputText value="#{c.etaDatetime}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="UTC"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="ATA">
+                    <h:outputText value="#{c.ataDatetime}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="UTC"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="ATD">
+                    <h:outputText value="#{c.atdDatetime}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="UTC"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Tonnage declare">#{c.declaredTonnage}</p:column>
+                <p:column headerText="Statut">#{c.status.name}</p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

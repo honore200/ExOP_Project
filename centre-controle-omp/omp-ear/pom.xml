@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.omp</groupId>
+    <artifactId>centre-controle-omp</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>omp-ear</artifactId>
+  <packaging>ear</packaging>
+
+  <name>omp-ear</name>
+  <description>Assemblage EAR : omp-api.war (context-root /api) + omp-web.war (context-root /omp), avec omp-common/omp-port/omp-rail en bibliotheque partagee (lib/, scan automatique des @Stateless).</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.omp</groupId>
+      <artifactId>omp-api</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>com.omp</groupId>
+      <artifactId>omp-web</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <!-- Bibliotheques partagees : sans ces declarations explicites, les classes marquees
+         "provided" dans omp-api/omp-web ne seraient nulle part au runtime (cf decision
+         d'architecture #6 du plan). -->
+    <dependency>
+      <groupId>com.omp</groupId>
+      <artifactId>omp-common</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.omp</groupId>
+      <artifactId>omp-port</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.omp</groupId>
+      <artifactId>omp-rail</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>centre-controle-omp</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+          <applicationName>Centre-Controle-OMP</applicationName>
+          <generateApplicationXml>false</generateApplicationXml>
+          <modules>
+            <webModule>
+              <groupId>com.omp</groupId>
+              <artifactId>omp-api</artifactId>
+              <contextRoot>/api</contextRoot>
+              <bundleFileName>omp-api.war</bundleFileName>
+            </webModule>
+            <webModule>
+              <groupId>com.omp</groupId>
+              <artifactId>omp-web</artifactId>
+              <contextRoot>/omp</contextRoot>
+              <bundleFileName>omp-web.war</bundleFileName>
+            </webModule>
+            <jarModule>
+              <groupId>com.omp</groupId>
+              <artifactId>omp-common</artifactId>
+              <bundleDir>lib</bundleDir>
+            </jarModule>
+            <jarModule>
+              <groupId>com.omp</groupId>
+              <artifactId>omp-port</artifactId>
+              <bundleDir>lib</bundleDir>
+            </jarModule>
+            <jarModule>
+              <groupId>com.omp</groupId>
+              <artifactId>omp-rail</artifactId>
+              <bundleDir>lib</bundleDir>
+            </jarModule>
+          </modules>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

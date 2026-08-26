@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:p="primefaces"
+                template="/templates/layout.xhtml">
+    <ui:param name="title" value="Railway Control"/>
+
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewAction action="#{dashboardRailBean.init}"/>
+        </f:metadata>
+
+        <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+            <p:panel header="Rotations suivies" style="flex:1;">
+                <h2>#{dashboardRailBean.rotations.size()}</h2>
+            </p:panel>
+            <p:panel header="En cours (pas encore parties)" style="flex:1;">
+                <h2>#{dashboardRailBean.rotationsEnCours}</h2>
+            </p:panel>
+        </div>
+
+        <h:form>
+            <p:dataTable value="#{dashboardRailBean.rotations}" var="r" paginator="true" rows="20">
+                <p:column headerText="Rotation">#{r.rotationNumber}</p:column>
+                <p:column headerText="Train arrivee">#{r.trainArrivalNumber}</p:column>
+                <p:column headerText="Train retour">#{r.trainReturnNumber}</p:column>
+                <p:column headerText="Wagons">#{r.wagonCount}</p:column>
+                <p:column headerText="Tonnage declare">#{r.declaredTonnage}</p:column>
+                <p:column headerText="Tonnage reel">#{r.tonnage}</p:column>
+                <p:column headerText="Arrivee">
+                    <h:outputText value="#{r.arrivalDatetime}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="UTC"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Depart">
+                    <h:outputText value="#{r.departureDatetime}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="UTC"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Statut">#{r.status.name}</p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

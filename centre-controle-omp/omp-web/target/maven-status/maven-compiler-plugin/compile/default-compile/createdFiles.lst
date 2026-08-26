@@ -1,0 +1,10 @@
+com/omp/web/bean/MaintenanceBean.class
+com/omp/web/bean/DashboardRailBean.class
+com/omp/web/bean/AlertesBean.class
+com/omp/web/security/SecurityConfig.class
+com/omp/web/bean/DashboardGlobalBean.class
+com/omp/web/bean/AdministrationBean.class
+com/omp/web/security/OmpIdentityStore.class
+com/omp/web/bean/RapportsBean.class
+com/omp/web/bean/DashboardPortBean.class
+com/omp/web/bean/LoginBean.class

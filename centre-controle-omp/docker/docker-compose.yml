@@ -1,0 +1,69 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    environment:
+      MYSQL_DATABASE: omp_ccontrole
+      MYSQL_USER: omp
+      MYSQL_PASSWORD: omp
+      MYSQL_ROOT_PASSWORD: ${OMP_DB_ROOT_PASSWORD:-changeme_root}
+    ports:
+      - "3306:3306"
+    volumes:
+      - omp_mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${OMP_DB_ROOT_PASSWORD:-changeme_root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  wildfly:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.wildfly
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1500m
+    cpus: 1.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      OMP_DB_URL: "jdbc:mysql://mysql:3306/omp_ccontrole?useSSL=false&serverTimezone=UTC"
+      OMP_DB_USER: omp
+      OMP_DB_PASSWORD: omp
+      OMP_JWT_SECRET: ${OMP_JWT_SECRET:-}
+      OMP_ADMIN_USERNAME: ${OMP_ADMIN_USERNAME:-admin}
+      OMP_ADMIN_PASSWORD: ${OMP_ADMIN_PASSWORD:-changeme123!}
+      OMP_PURGE_RETENTION_DAYS: ${OMP_PURGE_RETENTION_DAYS:-30}
+    ports:
+      - "8080:8080"   # omp-web: /omp, omp-api: /api
+      - "9990:9990"   # console d'administration WildFly
+    healthcheck:
+      # jboss-cli.sh est garanti present dans l'image WildFly (contrairement a curl/wget sur une
+      # base minimale) - interroge directement l'etat du serveur via l'interface de management.
+      test: ["CMD", "/opt/jboss/wildfly/bin/jboss-cli.sh", "--connect", "--controller=localhost:9990",
+             "--command=:read-attribute(name=server-state)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+volumes:
+  omp_mysql_data:
